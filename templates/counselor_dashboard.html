@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Counselor Dashboard - FOCUS Counseling{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h3>Welcome, {{ session.full_name }}!</h3>
+                            <p class="text-muted">Thank you for your dedication to serving students through Christ-centered counseling.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="online-indicator"></div>
+                            <span class="text-muted">Available for sessions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-users" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ appointments|length }}</h4>
+                    <p class="small mb-0">Total Students</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ appointments|selectattr('status', 'equalto', 'completed')|list|length }}</h4>
+                    <p class="small mb-0">Sessions Completed</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ appointments|selectattr('status', 'equalto', 'scheduled')|list|length }}</h4>
+                    <p class="small mb-0">Upcoming Sessions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-medical" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ appointments|selectattr('soap_notes')|list|length }}</h4>
+                    <p class="small mb-0">SOAP Notes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-calendar-alt me-2"></i>Your Counseling Sessions</h5>
+                </div>
+                <div class="card-body">
+                    {% if appointments %}
+                        {% for appointment in appointments %}
+                            <div class="appointment-card card mb-3">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h6 class="mb-1">Session with {{ appointment.student.full_name }}</h6>
+                                            <p class="text-muted mb-1">
+                                                <i class="fas fa-calendar me-1"></i>{{ appointment.date.strftime('%B %d, %Y') }}
+                                                <i class="fas fa-clock ms-3 me-1"></i>{{ appointment.time.strftime('%I:%M %p') }}
+                                            </p>
+                                            {% if appointment.notes %}
+                                                <p class="small mb-2">Notes: {{ appointment.notes }}</p>
+                                            {% endif %}
+                                            <div class="btn-group btn-group-sm">
+                                                {% if appointment.status == 'scheduled' %}
+                                                    <a href="{{ url_for('soap_note', appointment_id=appointment.id) }}" class="btn btn-outline-primary">
+                                                        <i class="fas fa-file-medical me-1"></i>Add SOAP Note
+                                                    </a>
+                                                {% endif %}
+                                                <a href="{{ url_for('messages') }}" class="btn btn-outline-info">
+                                                    <i class="fas fa-envelope me-1"></i>Message
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <span class="status-badge status-{{ appointment.status }}">
+                                                {{ appointment.status.title() }}
+                                            </span>
+                                            {% if appointment.soap_notes %}
+                                                <div class="mt-2">
+                                                    <small class="text-success">
+                                                        <i class="fas fa-check-circle"></i> SOAP Note Added
+                                                    </small>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">No counseling sessions scheduled yet.</p>
+                            <p class="text-muted">Students will be able to book appointments with you soon.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-tools me-2"></i>Counselor Tools</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('messages') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope me-2"></i>View Messages
+                        </a>
+                        <button class="btn btn-outline-info" onclick="showStudentList()">
+                            <i class="fas fa-users me-2"></i>View Students
+                        </button>
+                        <button class="btn btn-outline-success" onclick="showResources()">
+                            <i class="fas fa-book me-2"></i>Counseling Resources
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fas fa-bible me-2"></i>Daily Scripture</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-2"><em>"Be completely humble and gentle; be patient, bearing with one another in love."</em></p>
+                    <p class="text-muted small text-end">- Ephesians 4:2</p>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line me-2"></i>Weekly Stats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h5 class="text-primary">5</h5>
+                            <small class="text-muted">Sessions This Week</small>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="text-success">4.8</h5>
+                            <small class="text-muted">Avg. Rating</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Student List Modal -->
+<div class="modal fade" id="studentListModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Your Students</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    {% for appointment in appointments if appointment.student %}
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ appointment.student.full_name }}</h6>
+                                <small>{{ appointment.date.strftime('%B %d') }}</small>
+                            </div>
+                            <p class="mb-1">Last session: {{ appointment.date.strftime('%B %d, %Y') }}</p>
+                            <small>Status: {{ appointment.status }}</small>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resources Modal -->
+<div class="modal fade" id="resourcesModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Counseling Resources</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-book me-2"></i>Counseling Manual</h6>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-decoration-none">Section I: Foundational Identity</a></li>
+                            <li><a href="#" class="text-decoration-none">Section II: Counseling Process</a></li>
+                            <li><a href="#" class="text-decoration-none">Section III: Protocols</a></li>
+                            <li><a href="#" class="text-decoration-none">Section IV: Team Sustainability</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-file-alt me-2"></i>Forms & Templates</h6>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-decoration-none">Intake Form Template</a></li>
+                            <li><a href="#" class="text-decoration-none">SOAP Note Template</a></li>
+                            <li><a href="#" class="text-decoration-none">Risk Assessment Form</a></li>
+                            <li><a href="#" class="text-decoration-none">Goal Setting Worksheet</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showStudentList() {
+    $('#studentListModal').modal('show');
+}
+
+function showResources() {
+    $('#resourcesModal').modal('show');
+}
+</script>
+{% endblock %}

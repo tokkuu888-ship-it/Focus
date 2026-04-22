@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Home - FOCUS Counseling Platform{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1>FOCUS Counseling Ministry</h1>
+                <p class="lead">Christ-Centered Counseling for Student Growth and Spiritual Development</p>
+                <p class="mb-4">Professional counseling services grounded in biblical truth to support your academic, emotional, and spiritual journey.</p>
+                {% if not session.user_id %}
+                    <a href="{{ url_for('register') }}" class="btn btn-light btn-lg me-3">Get Started</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Login</a>
+                {% else %}
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-light btn-lg">Go to Dashboard</a>
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="fas fa-pray" style="font-size: 8rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-lg-12 text-center">
+            <h2 class="mb-4">Our Services</h2>
+            <p class="lead text-muted">Comprehensive counseling support for all aspects of student life</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center p-4">
+                <div class="feature-icon">
+                    <i class="fas fa-cross"></i>
+                </div>
+                <h4>Spiritual Counseling</h4>
+                <p>Guidance for spiritual growth, doubt resolution, and deepening your relationship with God through Christ-centered principles.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center p-4">
+                <div class="feature-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h4>Emotional Support</h4>
+                <p>Professional help for anxiety, stress, depression, and emotional challenges using evidence-based techniques integrated with biblical wisdom.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center p-4">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h4>Relationship Guidance</h4>
+                <p>Support for interpersonal conflicts, dating relationships, family issues, and building healthy Christian relationships.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center p-4">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h4>Academic Support</h4>
+                <p>Guidance for academic decisions, career planning, time management, and balancing studies with spiritual life.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body p-5">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h3>Why Choose FOCUS Counseling?</h3>
+                            <ul class="list-unstyled mt-3">
+                                <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Christ-centered approach grounded in Scripture</li>
+                                <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Professional counselors with biblical training</li>
+                                <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Confidential and compassionate care</li>
+                                <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Support for all aspects of student life</li>
+                                <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Online platform for convenient access</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 text-center">
+                            <i class="fas fa-shield-alt" style="font-size: 6rem; opacity: 0.3;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12 text-center">
+            <h2 class="mb-4">How It Works</h2>
+            <p class="lead text-muted">Simple steps to get the support you need</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h5>1. Register</h5>
+                    <p>Create your account and complete the intake form to help us understand your needs.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h5>2. Book Appointment</h5>
+                    <p>Choose a counselor and schedule a convenient time for your counseling session.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h5>3. Start Counseling</h5>
+                    <p>Connect with your counselor through secure messaging and live sessions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card bg-light">
+                <div class="card-body p-4 text-center">
+                    <h4>Need Immediate Help?</h4>
+                    <p class="mb-3">If you're experiencing a crisis or need urgent support, please don't hesitate to reach out.</p>
+                    <button class="btn btn-danger btn-lg" onclick="showCrisisInfo()">
+                        <i class="fas fa-phone-alt"></i> Crisis Support
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Crisis Modal -->
+<div class="modal fade" id="crisisModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Crisis Support Information</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>If you are in immediate danger, please call emergency services.</strong></p>
+                <div class="alert alert-info">
+                    <h6>FOCUS Crisis Support:</h6>
+                    <p><i class="fas fa-phone"></i> +251-XXX-XXXX (24/7 Hotline)</p>
+                    <p><i class="fas fa-envelope"></i> crisis@focus.org</p>
+                </div>
+                <div class="alert alert-warning">
+                    <h6>External Resources:</h6>
+                    <p>Local Emergency Services: 911</p>
+                    <p>Mental Health Crisis Line: Available 24/7</p>
+                </div>
+                <p class="text-muted small">Remember: You are not alone. Help is available, and reaching out is a sign of strength.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showCrisisInfo() {
+    $('#crisisModal').modal('show');
+}
+</script>
+{% endblock %}

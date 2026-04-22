@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}System Statistics - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5><i class="fas fa-chart-bar me-2"></i>System Statistics</h5>
+                            <p class="text-muted mb-0">Platform analytics and usage metrics</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users" style="font-size: 2rem;"></i>
+                                    <h4 class="mt-2">{{ stats.total_users }}</h4>
+                                    <p class="small mb-0">Total Users</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-graduate" style="font-size: 2rem;"></i>
+                                    <h4 class="mt-2">{{ stats.total_students }}</h4>
+                                    <p class="small mb-0">Students</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-md" style="font-size: 2rem;"></i>
+                                    <h4 class="mt-2">{{ stats.total_counselors }}</h4>
+                                    <p class="small mb-0">Counselors</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-dark text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-shield" style="font-size: 2rem;"></i>
+                                    <h4 class="mt-2">{{ stats.total_admins }}</h4>
+                                    <p class="small mb-0">Administrators</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-4 mt-3">
+                        <div class="col-md-4">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-calendar-check" style="font-size: 2rem;"></i>
+                                    <h4 class="mt-2">{{ stats.total_appointments }}</h4>
+                                    <p class="small mb-0">Total Appointments</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-clock" style="font-size: 2rem;"></i>
+                                    <h4 class="mt-2">{{ stats.scheduled_appointments }}</h4>
+                                    <p class="small mb-0">Scheduled</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-check-circle" style="font-size: 2rem;"></i>
+                                    <h4 class="mt-2">{{ stats.completed_appointments }}</h4>
+                                    <p class="small mb-0">Completed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="card bg-secondary text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-envelope" style="font-size: 2rem;"></i>
+                                    <h4 class="mt-2">{{ stats.total_messages }}</h4>
+                                    <p class="small mb-0">Total Messages</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-file-medical" style="font-size: 2rem;"></i>
+                                    <h4 class="mt-2">0</h4>
+                                    <p class="small mb-0">SOAP Notes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-chart-pie me-2"></i>User Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <div>
+                                <div class="mb-3">
+                                    <span class="badge bg-info me-2">Students: {{ stats.total_students }}</span>
+                                    <span class="badge bg-success me-2">Counselors: {{ stats.total_counselors }}</span>
+                                    <span class="badge bg-dark">Admins: {{ stats.total_admins }}</span>
+                                </div>
+                                <small class="text-muted">User type distribution across the platform</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-chart-line me-2"></i>Appointment Status</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <div>
+                                <div class="mb-3">
+                                    <span class="badge bg-primary me-2">Scheduled: {{ stats.scheduled_appointments }}</span>
+                                    <span class="badge bg-success">Completed: {{ stats.completed_appointments }}</span>
+                                </div>
+                                <small class="text-muted">Appointment status breakdown</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-download me-2"></i>Export Data</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary btn-sm w-100">
+                                <i class="fas fa-file-excel me-2"></i>Export Users
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-info btn-sm w-100">
+                                <i class="fas fa-file-excel me-2"></i>Export Appointments
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-success btn-sm w-100">
+                                <i class="fas fa-file-excel me-2"></i>Export Messages
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-secondary btn-sm w-100">
+                                <i class="fas fa-file-pdf me-2"></i>Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Add any interactive chart functionality here
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Admin statistics page loaded');
+});
+</script>
+{% endblock %}

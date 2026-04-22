@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}SOAP Note - FOCUS Counseling{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-file-medical me-2"></i>SOAP Note for {{ appointment.student.full_name }}</h4>
+                    <p class="text-muted mb-0">
+                        Session Date: {{ appointment.date.strftime('%B %d, %Y') }} at {{ appointment.time.strftime('%I:%M %p') }}
+                    </p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>SOAP Note Format:</strong> Subjective (what the student says), Objective (what you observe), Assessment (your professional analysis), Plan (next steps)
+                    </div>
+                    
+                    {% if appointment.soap_notes %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            A SOAP note has already been created for this session on {{ appointment.soap_notes[0].created_at.strftime('%B %d, %Y at %I:%M %p') }}.
+                        </div>
+                    {% endif %}
+                    
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <h5><i class="fas fa-quote-left me-2"></i>Subjective (S)</h5>
+                                    <p class="text-muted small">Student's verbal expressions, feelings, and reported experiences</p>
+                                    <textarea name="subjective" class="form-control" rows="4" placeholder="Student reports: 'I feel anxious about my exams and my relationship with God...'">{% if appointment.soap_notes %}{{ appointment.soap_notes[0].subjective }}{% endif %}</textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <h5><i class="fas fa-eye me-2"></i>Objective (O)</h5>
+                                    <p class="text-muted small">Your observations: mood, affect, behavior, appearance</p>
+                                    <textarea name="objective" class="form-control" rows="4" placeholder="Observed: Fidgeting, tearful, poor eye contact, tense posture...">{% if appointment.soap_notes %}{{ appointment.soap_notes[0].objective }}{% endif %}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <h5><i class="fas fa-brain me-2"></i>Assessment (A)</h5>
+                                    <p class="text-muted small">Professional analysis integrating psychology and spiritual insight</p>
+                                    <textarea name="assessment" class="form-control" rows="4" placeholder="Assessment: Mild anxiety linked to academic pressure and spiritual struggle. Biblical insight: Philippians 4:6...">{% if appointment.soap_notes %}{{ appointment.soap_notes[0].assessment }}{% endif %}</textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <h5><i class="fas fa-clipboard-list me-2"></i>Plan (P)</h5>
+                                    <p class="text-muted small">Next steps, homework, spiritual exercises, follow-up</p>
+                                    <textarea name="plan" class="form-control" rows="4" placeholder="Plan: Assign daily prayer and scripture reflection; follow-up in 1 week; monitor stress...">{% if appointment.soap_notes %}{{ appointment.soap_notes[0].plan }}{% endif %}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6><i class="fas fa-bible me-2"></i>Biblical Integration Prompts</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="small mb-1"><strong>For Anxiety:</strong> Philippians 4:6-7, 1 Peter 5:7</p>
+                                        <p class="small mb-1"><strong>For Depression:</strong> Psalm 34:18, 2 Corinthians 1:3-4</p>
+                                        <p class="small mb-1"><strong>For Relationship Issues:</strong> Matthew 18:15, Ephesians 4:32</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="small mb-1"><strong>For Spiritual Doubt:</strong> James 1:5-6, Isaiah 41:10</p>
+                                        <p class="small mb-1"><strong>For Academic Stress:</strong> Proverbs 3:5-6, Colossians 3:23</p>
+                                        <p class="small mb-1"><strong>For Life Decisions:</strong> Proverbs 16:3, Jeremiah 29:11</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            <div>
+                                <button type="button" class="btn btn-outline-primary me-2" onclick="saveDraft()">
+                                    <i class="fas fa-save me-2"></i>Save Draft
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-check-circle me-2"></i>Save SOAP Note
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function saveDraft() {
+    // In a real application, this would save to localStorage or a draft endpoint
+    const form = document.querySelector('form');
+    const formData = new FormData(form);
+    
+    // Save to localStorage as draft
+    const draft = {};
+    for (let [key, value] of formData.entries()) {
+        draft[key] = value;
+    }
+    
+    localStorage.setItem('soapNoteDraft', JSON.stringify(draft));
+    
+    // Show success message
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '9999';
+    alert.innerHTML = `
+        <i class="fas fa-save me-2"></i>Draft saved locally!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alert);
+    
+    setTimeout(() => {
+        alert.remove();
+    }, 3000);
+}
+
+// Load draft on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const draft = localStorage.getItem('soapNoteDraft');
+    if (draft) {
+        const draftData = JSON.parse(draft);
+        const form = document.querySelector('form');
+        
+        // Only populate if fields are empty
+        for (let [key, value] of Object.entries(draftData)) {
+            const field = form.querySelector(`[name="${key}"]`);
+            if (field && !field.value) {
+                field.value = value;
+            }
+        }
+    }
+    
+    // Auto-save draft every 30 seconds
+    setInterval(function() {
+        const form = document.querySelector('form');
+        const formData = new FormData(form);
+        
+        const draft = {};
+        for (let [key, value] of formData.entries()) {
+            draft[key] = value;
+        }
+        
+        localStorage.setItem('soapNoteDraft', JSON.stringify(draft));
+    }, 30000);
+});
+
+// Character count and validation
+document.addEventListener('DOMContentLoaded', function() {
+    const textareas = document.querySelectorAll('textarea');
+    
+    textareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            // Limit character count
+            if (this.value.length > 2000) {
+                this.value = this.value.substring(0, 2000);
+            }
+            
+            // Add character counter
+            let counter = this.parentNode.querySelector('.char-counter');
+            if (!counter) {
+                counter = document.createElement('small');
+                counter.className = 'text-muted char-counter';
+                this.parentNode.appendChild(counter);
+            }
+            counter.textContent = `${this.value.length}/2000 characters`;
+        });
+    });
+});
+
+// Clear draft when form is submitted
+document.querySelector('form').addEventListener('submit', function(e) {
+    localStorage.removeItem('soapNoteDraft');
+});
+</script>
+{% endblock %}

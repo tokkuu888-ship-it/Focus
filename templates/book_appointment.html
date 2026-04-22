@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment - FOCUS Counseling{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-calendar-plus me-2"></i>Book Counseling Appointment</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Appointment Guidelines:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Each session is typically 60 minutes long</li>
+                            <li>Please arrive 5 minutes early for your session</li>
+                            <li>Cancel at least 24 hours in advance if needed</li>
+                            <li>Be prepared to discuss your concerns openly</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-4">
+                            {{ form.counselor_id.label(class="form-label") }}
+                            {{ form.counselor_id(class="form-select") }}
+                            {% if form.counselor_id.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.counselor_id.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="text-muted">Select a counselor based on their expertise and availability</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.date.label(class="form-label") }}
+                                {{ form.date(class="form-control") }}
+                                {% if form.date.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.date.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <small class="text-muted">Select your preferred date</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                {{ form.time.label(class="form-label") }}
+                                {{ form.time(class="form-control") }}
+                                {% if form.time.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.time.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <small class="text-muted">Available slots: 9:00 AM - 5:00 PM</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.notes.label(class="form-label") }}
+                            {{ form.notes(class="form-control", rows="4", placeholder="Please briefly describe the reason for your appointment and any specific concerns you'd like to discuss...") }}
+                            {% if form.notes.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.notes.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="text-muted">This helps your counselor prepare for your session</small>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-exclamation-triangle me-2"></i>Important Notice</h6>
+                            <p class="small mb-0">If you are experiencing a mental health crisis or have thoughts of harming yourself or others, please contact our crisis support immediately or call emergency services.</p>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-check me-2"></i>Book Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Set minimum date to today
+document.addEventListener('DOMContentLoaded', function() {
+    var dateInput = document.querySelector('input[type="date"]');
+    if (dateInput) {
+        var today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+    }
+    
+    // Add time validation
+    var timeInput = document.querySelector('input[type="time"]');
+    if (timeInput) {
+        timeInput.addEventListener('change', function() {
+            var time = this.value;
+            var hour = parseInt(time.split(':')[0]);
+            
+            // Restrict hours between 9 AM and 5 PM
+            if (hour < 9 || hour > 17) {
+                this.setCustomValidity('Please select a time between 9:00 AM and 5:00 PM');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

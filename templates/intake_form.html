@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Intake Form - FOCUS Counseling{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-clipboard-list me-2"></i>Student Intake Form</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Welcome to FOCUS Counseling!</strong> This form helps us understand your needs and provide the best possible support. All information is kept strictly confidential according to our ethical guidelines.
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.full_name.label(class="form-label") }}
+                                {{ form.full_name(class="form-control") }}
+                                {% if form.full_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.full_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                {{ form.age.label(class="form-label") }}
+                                {{ form.age(class="form-control") }}
+                                {% if form.age.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.age.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.contact_info.label(class="form-label") }}
+                                {{ form.contact_info(class="form-control") }}
+                                {% if form.contact_info.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.contact_info.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                {{ form.emergency_contact.label(class="form-label") }}
+                                {{ form.emergency_contact(class="form-control") }}
+                                {% if form.emergency_contact.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.emergency_contact.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.academic_program.label(class="form-label") }}
+                            {{ form.academic_program(class="form-control") }}
+                            {% if form.academic_program.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.academic_program.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.counseling_history.label(class="form-label") }}
+                            {{ form.counseling_history(class="form-control", rows="3", placeholder="Have you received counseling before? If yes, please briefly describe your experience...") }}
+                            {% if form.counseling_history.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.counseling_history.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.current_concerns.label(class="form-label") }}
+                            {{ form.current_concerns(class="form-control", rows="4", placeholder="Please describe what brings you to counseling at this time. You can mention spiritual, emotional, relational, academic, or any other concerns...") }}
+                            {% if form.current_concerns.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.current_concerns.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.spiritual_background.label(class="form-label") }}
+                            {{ form.spiritual_background(class="form-control", rows="3", placeholder="Tell us about your spiritual journey, church involvement, prayer life, and any spiritual questions or challenges you're facing...") }}
+                            {% if form.spiritual_background.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.spiritual_background.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="alert alert-warning mb-4">
+                            <h6><i class="fas fa-shield-alt me-2"></i>Confidentiality & Consent</h6>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="consent" required>
+                                <label class="form-check-label" for="consent">
+                                    I understand that counseling sessions are confidential, except where disclosure is required by law (such as risk of harm to self or others, or abuse of a minor).
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="agreement" required>
+                                <label class="form-check-label" for="agreement">
+                                    I agree to participate in counseling and understand that I can withdraw at any time.
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="christian" required>
+                                <label class="form-check-label" for="christian">
+                                    I understand that FOCUS Counseling provides Christ-centered counseling that integrates biblical principles with professional counseling practices.
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-success">
+                            <h6><i class="fas fa-lightbulb me-2"></i>What to Expect</h6>
+                            <ul class="mb-0 small">
+                                <li>Your counselor will review this information before your first session</li>
+                                <li>All information is kept secure and confidential</li>
+                                <li>You will be contacted to schedule your first appointment</li>
+                                <li>Counseling is a collaborative process aimed at your growth and well-being</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary" onclick="return validateConsent()">
+                                <i class="fas fa-check-circle me-2"></i>Submit Intake Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function validateConsent() {
+    const consent = document.getElementById('consent');
+    const agreement = document.getElementById('agreement');
+    const christian = document.getElementById('christian');
+    
+    if (!consent.checked || !agreement.checked || !christian.checked) {
+        alert('Please check all consent checkboxes to proceed.');
+        return false;
+    }
+    
+    return true;
+}
+
+// Auto-populate emergency contact if same as personal contact
+document.addEventListener('DOMContentLoaded', function() {
+    const contactInfo = document.querySelector('input[name="contact_info"]');
+    const emergencyContact = document.querySelector('input[name="emergency_contact"]');
+    
+    if (contactInfo && emergencyContact) {
+        emergencyContact.addEventListener('focus', function() {
+            if (!this.value && contactInfo.value) {
+                if (confirm('Use same contact information for emergency contact?')) {
+                    this.value = contactInfo.value;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

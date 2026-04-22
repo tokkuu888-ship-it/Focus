@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Messages - FOCUS Counseling{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-envelope me-2"></i>Messages</h5>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button class="btn btn-sm btn-outline-primary" onclick="refreshMessages()">
+                                <i class="fas fa-sync-alt me-1"></i>Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chat-container" id="chatContainer">
+                        {% if sent_messages or received_messages %}
+                            {% set all_messages = (sent_messages + received_messages) | sort(attribute='timestamp') %}
+                            {% for message in all_messages %}
+                                <div class="message-bubble {% if message.sender_id == session.user_id %}message-sent{% else %}message-received{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <strong>{{ message.sender.full_name }}</strong>
+                                        <small class="text-muted">{{ message.timestamp.strftime('%I:%M %p') }}</small>
+                                    </div>
+                                    <p class="mb-0">{{ message.content }}</p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-comments" style="font-size: 3rem; color: #ccc;"></i>
+                                <p class="text-muted mt-3">No messages yet. Start a conversation!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('send_message') }}">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <select name="receiver_id" class="form-select" required>
+                                    <option value="">Select recipient...</option>
+                                    {% if session.user_type == 'student' %}
+                                        {% for counselor in counselors %}
+                                            <option value="{{ counselor.id }}">{{ counselor.full_name }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for student in students %}
+                                            <option value="{{ student.id }}">{{ student.full_name }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <div class="input-group">
+                                    <textarea name="message" class="form-control" rows="2" placeholder="Type your message..." required></textarea>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane"></i> Send
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-users me-2"></i>Contacts</h5>
+                </div>
+                <div class="card-body">
+                    {% if session.user_type == 'student' %}
+                        <h6 class="text-muted mb-3">Available Counselors</h6>
+                        {% for counselor in counselors %}
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        {{ counselor.full_name[0] }}
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-0">{{ counselor.full_name }}</h6>
+                                    <small class="text-muted">Counselor</small>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <div class="online-indicator"></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <h6 class="text-muted mb-3">Your Students</h6>
+                        {% for student in students %}
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        {{ student.full_name[0] }}
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-0">{{ student.full_name }}</h6>
+                                    <small class="text-muted">Student</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle me-2"></i>Message Guidelines</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="small mb-0">
+                        <li>Be respectful and professional</li>
+                        <li>Allow 24-48 hours for responses</li>
+                        <li>For urgent matters, call crisis support</li>
+                        <li>Keep messages concise and clear</li>
+                        <li>Avoid sharing sensitive personal info</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fas fa-exclamation-triangle me-2"></i>Crisis Support</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-2">If you're in crisis, don't wait for a message response.</p>
+                    <button class="btn btn-danger btn-sm w-100" onclick="showCrisisInfo()">
+                        <i class="fas fa-phone-alt me-2"></i>Get Help Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Crisis Modal (same as in index.html) -->
+<div class="modal fade" id="crisisModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Crisis Support Information</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>If you are in immediate danger, please call emergency services.</strong></p>
+                <div class="alert alert-info">
+                    <h6>FOCUS Crisis Support:</h6>
+                    <p><i class="fas fa-phone"></i> +251-XXX-XXXX (24/7 Hotline)</p>
+                    <p><i class="fas fa-envelope"></i> crisis@focus.org</p>
+                </div>
+                <p class="text-muted small">Remember: You are not alone. Help is available.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function refreshMessages() {
+    location.reload();
+}
+
+function showCrisisInfo() {
+    $('#crisisModal').modal('show');
+}
+
+// Auto-scroll to bottom of chat
+document.addEventListener('DOMContentLoaded', function() {
+    var chatContainer = document.getElementById('chatContainer');
+    if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+});
+
+// Auto-refresh messages every 30 seconds
+setInterval(function() {
+    // Only refresh if user is active on the page
+    if (!document.hidden) {
+        // In a real application, you would use AJAX to fetch new messages
+        // For now, we'll just show a subtle indicator
+        var refreshBtn = document.querySelector('[onclick="refreshMessages()"]');
+        if (refreshBtn) {
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt fa-spin me-1"></i>Checking...';
+            setTimeout(function() {
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Refresh';
+            }, 1000);
+        }
+    }
+}, 30000);
+
+// Character counter for message textarea
+document.addEventListener('DOMContentLoaded', function() {
+    var messageTextarea = document.querySelector('textarea[name="message"]');
+    if (messageTextarea) {
+        messageTextarea.addEventListener('input', function() {
+            if (this.value.length > 500) {
+                this.value = this.value.substring(0, 500);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

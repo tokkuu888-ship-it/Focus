@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}View User - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5><i class="fas fa-user me-2"></i>User Profile: {{ user.full_name }}</h5>
+                            <p class="text-muted mb-0">Detailed user information and activity</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Users
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                                    {{ user.full_name[0] }}
+                                </div>
+                                <div>
+                                    <h4 class="mb-1">{{ user.full_name }}</h4>
+                                    <p class="text-muted mb-0">@{{ user.username }}</p>
+                                    <div>
+                                        {% if user.user_type == 'admin' %}
+                                            <span class="badge bg-dark">Administrator</span>
+                                        {% elif user.user_type == 'counselor' %}
+                                            <span class="badge bg-success">Counselor</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Student</span>
+                                        {% endif %}
+                                        <span class="badge bg-success ms-2">Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group">
+                                <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="btn btn-primary">
+                                    <i class="fas fa-edit me-2"></i>Edit User
+                                </a>
+                                {% if user.id != session.user_id %}
+                                    <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user and all their data?')">
+                                            <i class="fas fa-trash me-2"></i>Delete
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-info-circle me-2"></i>Account Information</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Username:</strong></td>
+                                    <td>{{ user.username }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td>{{ user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>User Type:</strong></td>
+                                    <td>
+                                        {% if user.user_type == 'admin' %}
+                                            <span class="badge bg-dark">Administrator</span>
+                                        {% elif user.user_type == 'counselor' %}
+                                            <span class="badge bg-success">Counselor</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Student</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Account Created:</strong></td>
+                                    <td>{{ user.created_at.strftime('%B %d, %Y at %I:%M %p') }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>User ID:</strong></td>
+                                    <td>{{ user.id }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-chart-bar me-2"></i>Activity Statistics</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Messages Sent:</strong></td>
+                                    <td>{{ sent_messages }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Messages Received:</strong></td>
+                                    <td>{{ received_messages }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Appointments:</strong></td>
+                                    <td>{{ appointments|length }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Completed Appointments:</strong></td>
+                                    <td>{{ appointments|selectattr('status', 'equalto', 'completed')|list|length }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Intake Form:</strong></td>
+                                    <td>
+                                        {% if intake_form %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Not Completed</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {% if user.user_type == 'student' and intake_form %}
+                    <div class="row mt-4">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-clipboard-list me-2"></i>Intake Form Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Age:</strong> {{ intake_form.age or 'Not specified' }}</p>
+                                            <p><strong>Contact:</strong> {{ intake_form.contact_info or 'Not specified' }}</p>
+                                            <p><strong>Emergency Contact:</strong> {{ intake_form.emergency_contact or 'Not specified' }}</p>
+                                            <p><strong>Academic Program:</strong> {{ intake_form.academic_program or 'Not specified' }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Counseling History:</strong></p>
+                                            <p class="text-muted small">{{ intake_form.counseling_history or 'No previous counseling history' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <p><strong>Current Concerns:</strong></p>
+                                        <p class="text-muted">{{ intake_form.current_concerns }}</p>
+                                    </div>
+                                    {% if intake_form.spiritual_background %}
+                                    <div class="mt-3">
+                                        <p><strong>Spiritual Background:</strong></p>
+                                        <p class="text-muted">{{ intake_form.spiritual_background }}</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if appointments %}
+                    <div class="row mt-4">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-calendar-alt me-2"></i>Recent Appointments</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Time</th>
+                                                    {% if user.user_type == 'student' %}
+                                                        <th>Counselor</th>
+                                                    {% else %}
+                                                        <th>Student</th>
+                                                    {% endif %}
+                                                    <th>Status</th>
+                                                    <th>Notes</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for appointment in appointments[:10] %}
+                                                <tr>
+                                                    <td>{{ appointment.date.strftime('%b %d, %Y') }}</td>
+                                                    <td>{{ appointment.time.strftime('%I:%M %p') }}</td>
+                                                    {% if user.user_type == 'student' %}
+                                                        <td>{{ appointment.counselor.full_name }}</td>
+                                                    {% else %}
+                                                        <td>{{ appointment.student.full_name }}</td>
+                                                    {% endif %}
+                                                    <td>
+                                                        {% if appointment.status == 'scheduled' %}
+                                                            <span class="badge bg-primary">Scheduled</span>
+                                                        {% elif appointment.status == 'completed' %}
+                                                            <span class="badge bg-success">Completed</span>
+                                                        {% elif appointment.status == 'cancelled' %}
+                                                            <span class="badge bg-danger">Cancelled</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if appointment.notes %}
+                                                            <small>{{ appointment.notes[:50] }}{% if appointment.notes|length > 50 %}...{% endif %}</small>
+                                                        {% else %}
+                                                            <small class="text-muted">No notes</small>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

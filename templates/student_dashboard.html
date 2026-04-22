@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - FOCUS Counseling{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h3>Welcome back, {{ session.full_name }}!</h3>
+                            <p class="text-muted">Your counseling journey continues. Here's your current status.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            {% if not intake_form %}
+                                <a href="{{ url_for('intake_form') }}" class="btn btn-warning">
+                                    <i class="fas fa-clipboard-list me-2"></i>Complete Intake Form
+                                </a>
+                            {% endif %}
+                            <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
+                                <i class="fas fa-calendar-plus me-2"></i>Book Appointment
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ appointments|length }}</h4>
+                    <p class="small mb-0">Total Appointments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ appointments|selectattr('status', 'equalto', 'completed')|list|length }}</h4>
+                    <p class="small mb-0">Completed Sessions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ appointments|selectattr('status', 'equalto', 'scheduled')|list|length }}</h4>
+                    <p class="small mb-0">Upcoming Sessions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-clipboard-list" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{% if intake_form %}1{% else %}0{% endif %}</h4>
+                    <p class="small mb-0">Intake Form</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-calendar-alt me-2"></i>Your Appointments</h5>
+                </div>
+                <div class="card-body">
+                    {% if appointments %}
+                        {% for appointment in appointments %}
+                            <div class="appointment-card card mb-3">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h6 class="mb-1">Session with {{ appointment.counselor.full_name }}</h6>
+                                            <p class="text-muted mb-1">
+                                                <i class="fas fa-calendar me-1"></i>{{ appointment.date.strftime('%B %d, %Y') }}
+                                                <i class="fas fa-clock ms-3 me-1"></i>{{ appointment.time.strftime('%I:%M %p') }}
+                                            </p>
+                                            {% if appointment.notes %}
+                                                <p class="small mb-0">{{ appointment.notes }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <span class="status-badge status-{{ appointment.status }}">
+                                                {{ appointment.status.title() }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">No appointments scheduled yet.</p>
+                            <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
+                                <i class="fas fa-calendar-plus me-2"></i>Book Your First Appointment
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-bell me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                        <div>
+                            <a href="{{ url_for('edit_profile') }}" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-user-edit me-2"></i>Edit Profile
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fas fa-lightbulb me-2"></i>Spiritual Encouragement</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-2"><em>"The Lord is close to the brokenhearted and saves those who are crushed in spirit."</em></p>
+                    <p class="text-muted small text-end">- Psalm 34:18</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
