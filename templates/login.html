@@ -18,8 +18,8 @@
                         {{ form.hidden_tag() }}
                         
                         <div class="mb-3">
-                            {{ form.username.label(class="form-label") }}
-                            {{ form.username(class="form-control") }}
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
                             {% if form.username.errors %}
                                 <div class="text-danger small mt-1">
                                     {% for error in form.username.errors %}
@@ -27,11 +27,12 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
+                            <small class="text-muted">Use your username for all account types (Admin, Counselor, Student)</small>
                         </div>
                         
                         <div class="mb-3">
-                            {{ form.password.label(class="form-label") }}
-                            {{ form.password(class="form-control") }}
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
                             {% if form.password.errors %}
                                 <div class="text-danger small mt-1">
                                     {% for error in form.password.errors %}
@@ -42,8 +43,8 @@
                         </div>
                         
                         <div class="mb-3 form-check">
-                            {{ form.remember_me(class="form-check-input") }}
-                            {{ form.remember_me.label(class="form-check-label") }}
+                            <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+                            <label class="form-check-label" for="remember_me">Remember me</label>
                         </div>
                         
                         <div class="d-grid">

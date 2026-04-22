@@ -43,8 +43,13 @@
                         </div>
                         
                         <div class="mb-3">
-                            {{ form.user_type.label(class="form-label") }}
-                            {{ form.user_type(class="form-select") }}
+                            <label for="user_type" class="form-label">User Type</label>
+                            <select id="user_type" class="form-select" name="user_type" required>
+                                <option value="">Select user type...</option>
+                                <option value="admin">Admin username/email</option>
+                                <option value="counselor">Counselor</option>
+                                <option value="student">Student</option>
+                            </select>
                             {% if form.user_type.errors %}
                                 <div class="text-danger small mt-1">
                                     {% for error in form.user_type.errors %}
@@ -52,7 +57,7 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
-                            <small class="text-muted">Select your role: 'Student' for counseling services, 'Counselor' for providing counseling, or 'Administrator' for platform management</small>
+                            <small class="text-muted">Select your role: 'Admin username/email' for platform management, 'Counselor' for providing counseling, or 'Student' for counseling services</small>
                         </div>
                         
                         <div class="row">

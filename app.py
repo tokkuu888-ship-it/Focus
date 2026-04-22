@@ -97,9 +97,9 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     user_type = SelectField('User Type', choices=[
-        ('student', 'Student'),
+        ('admin', 'Admin username/email'),
         ('counselor', 'Counselor'),
-        ('admin', 'Administrator')
+        ('student', 'Student')
     ], validators=[DataRequired()])
 
 class AppointmentForm(FlaskForm):
