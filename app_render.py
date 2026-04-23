@@ -6,6 +6,7 @@ Production-ready Flask application for Render hosting
 
 import os
 import sys
+import sqlalchemy as sa
 from app import app, db, User
 from flask_wtf.csrf import CSRFProtect
 
@@ -76,28 +77,26 @@ def initialize_database():
     """Initialize database and create tables"""
     try:
         with app.app_context():
-            # WARNING: This deletes existing data in the database!
-            # Drop all tables with CASCADE to handle foreign key constraints
-            db.drop_all()
-            # Create all database tables
+            print("🔄 Performing total database reset...")
+            # 1. Wipe everything using CASCADE
+            db.session.execute(sa.text('DROP SCHEMA public CASCADE;'))
+            db.session.execute(sa.text('CREATE SCHEMA public;'))
+            db.session.commit()
+            
+            # 2. Rebuild new Focus platform tables
             db.create_all()
-            print("Database tables dropped and recreated successfully!")
+            print("✅ Database tables created successfully with fresh schema!")
             return True
     except Exception as e:
-        print(f"Error creating database tables: {e}")
-        # If normal drop fails, try manual SQL with CASCADE
+        print(f"⚠️ Reset failed, attempting standard creation: {e}")
+        db.session.rollback()
         try:
-            with app.app_context():
-                # Execute raw SQL to drop all tables with CASCADE
-                db.session.execute("DROP SCHEMA public CASCADE")
-                db.session.execute("CREATE SCHEMA public")
-                db.session.commit()
-                # Now create tables
-                db.create_all()
-                print("Database reset with CASCADE successful!")
-                return True
+            # Fallback to standard creation
+            db.create_all()
+            print("✅ Database tables created with standard method!")
+            return True
         except Exception as e2:
-            print(f"Error with CASCADE reset: {e2}")
+            print(f"❌ Standard creation also failed: {e2}")
             return False
 
 if __name__ == '__main__':
