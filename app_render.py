@@ -77,6 +77,7 @@ def initialize_database():
     try:
         with app.app_context():
             # WARNING: This deletes existing data in the database!
+            # Drop all tables with CASCADE to handle foreign key constraints
             db.drop_all()
             # Create all database tables
             db.create_all()
@@ -84,7 +85,20 @@ def initialize_database():
             return True
     except Exception as e:
         print(f"Error creating database tables: {e}")
-        return False
+        # If normal drop fails, try manual SQL with CASCADE
+        try:
+            with app.app_context():
+                # Execute raw SQL to drop all tables with CASCADE
+                db.session.execute("DROP SCHEMA public CASCADE")
+                db.session.execute("CREATE SCHEMA public")
+                db.session.commit()
+                # Now create tables
+                db.create_all()
+                print("Database reset with CASCADE successful!")
+                return True
+        except Exception as e2:
+            print(f"Error with CASCADE reset: {e2}")
+            return False
 
 if __name__ == '__main__':
     try:
