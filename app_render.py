@@ -77,15 +77,15 @@ def initialize_database():
     """Initialize database and create tables"""
     try:
         with app.app_context():
-            print("🔄 Performing total database reset...")
-            # 1. Wipe everything using CASCADE
-            db.session.execute(sa.text('DROP SCHEMA public CASCADE;'))
-            db.session.execute(sa.text('CREATE SCHEMA public;'))
-            db.session.commit()
+            print("� Checking database connection...")
+            # Add '#' to start of these lines to disable them:
+            # db.session.execute(sa.text('DROP SCHEMA public CASCADE;')) 
+            # db.session.execute(sa.text('CREATE SCHEMA public;'))
+            # db.session.commit()
             
-            # 2. Rebuild new Focus platform tables
-            db.create_all()
-            print("✅ Database tables created successfully with fresh schema!")
+            # Keep this one active so it ensures tables exist without deleting them
+            db.create_all() 
+            print("✅ Database is ready!")
             return True
     except Exception as e:
         print(f"⚠️ Reset failed, attempting standard creation: {e}")
