@@ -76,9 +76,11 @@ def initialize_database():
     """Initialize database and create tables"""
     try:
         with app.app_context():
+            # WARNING: This deletes existing data in the database!
+            db.drop_all()
             # Create all database tables
             db.create_all()
-            print("Database tables created successfully!")
+            print("Database tables dropped and recreated successfully!")
             return True
     except Exception as e:
         print(f"Error creating database tables: {e}")
