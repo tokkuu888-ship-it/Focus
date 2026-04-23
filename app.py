@@ -7,12 +7,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import os
 import secrets
-import sqlite3
 from functools import wraps
 
+# Database configuration
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secrets.token_hex(16)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///counseling.db'
+
+# Check if we're in production (Render) or development
+if os.environ.get('DATABASE_URL'):
+    # Production: Use PostgreSQL from Render
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    print("🗄️ Using PostgreSQL database (Production)")
+else:
+    # Development: Use SQLite
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///counseling.db'
+    print("🗄️ Using SQLite database (Development)")
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)

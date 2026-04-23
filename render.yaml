@@ -1,0 +1,23 @@
+services:
+  # Web Service
+  - type: web
+    name: focus-counseling
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app_render.py"
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.7
+      - key: FLASK_ENV
+        value: production
+
+  # PostgreSQL Database
+  - type: postgres
+    name: focus-db
+    plan: free
+    ipAllowList: []  # Only allow connections from Render services
+    databases:
+      - name: focus_counseling
+        user: focus_user

@@ -97,7 +97,7 @@ def create_sample_data():
         student = User(
             username='student1',
             email='student@focus.org',
-            full_name='John Doe',
+            full_name='Tokuma Adamu!',
             user_type='student'
         )
         student.set_password('student123')
