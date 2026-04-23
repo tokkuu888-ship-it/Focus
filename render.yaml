@@ -8,12 +8,8 @@ services:
     startCommand: "python app_render.py"
     healthCheckPath: /
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.7
       - key: FLASK_ENV
         value: production
-    runtime: python
-    pythonVersion: 3.11.7
 
   # PostgreSQL Database
   - type: postgres
