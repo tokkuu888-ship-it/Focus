@@ -541,7 +541,7 @@ def toggle_user_status(user_id):
 
 @app.route('/admin/view_user/<int:user_id>')
 @admin_required
-def view_user(user_id):
+def admin_view_user(user_id):
     user = User.query.get_or_404(user_id)
     
     # Get user statistics
