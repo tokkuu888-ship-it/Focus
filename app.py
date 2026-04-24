@@ -381,8 +381,13 @@ def get_messages(user_id):
 @app.route('/admin/users')
 @admin_required
 def admin_users():
-    users = User.query.order_by(User.created_at.desc()).all()
-    return render_template('admin_users.html', users=users)
+    try:
+        users = User.query.order_by(User.created_at.desc()).all()
+        return render_template('admin_users.html', users=users)
+    except Exception as e:
+        print(f"Error in admin_users: {e}")
+        flash(f'Error loading users: {str(e)}', 'error')
+        return redirect(url_for('dashboard'))
 
 @app.route('/admin/appointments')
 @admin_required
