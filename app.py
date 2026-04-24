@@ -491,7 +491,7 @@ def edit_profile():
 # Enhanced Admin User Management
 @app.route('/admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
 @admin_required
-def edit_user(user_id):
+def admin_edit_user(user_id):
     user = User.query.get_or_404(user_id)
     form = AdminUserEditForm()
     
